@@ -1,0 +1,192 @@
+package Trabalho;
+
+import java.util.Scanner;
+
+public class Trabalho {
+
+    public static void criarRanking(String[][] matriz, int linhas, int colunas) {
+        double[] medias = new double[linhas];
+        String[] nomes = new String[linhas];
+
+        for (int i = 0; i < linhas; i++) {
+            String nomeMateria = matriz[i][0];
+            double media = calcularMedia(matriz, linhas, nomeMateria);
+            medias[i] = media;
+            nomes[i] = nomeMateria;
+        }
+
+        ordenarRanking(medias, nomes);
+
+        System.out.println("Ranking de Médias:");
+        for (int i = 0; i < linhas; i++) {
+            System.out.println((i+1) + "º lugar: " + nomes[i] + " - Média: " + medias[i]);
+        }
+    }
+
+    public static void ordenarRanking(double[] medias, String[] nomes) {
+        int n = medias.length;
+
+        for (int i = 0; i < n-1; i++) {
+            for (int j = 0; j < n-i-1; j++) {
+                if (medias[j] < medias[j+1]) {
+                    // Troca as posições
+                    double tempMedia = medias[j];
+                    medias[j] = medias[j+1];
+                    medias[j+1] = tempMedia;
+
+                    String tempNome = nomes[j];
+                    nomes[j] = nomes[j+1];
+                    nomes[j+1] = tempNome;
+                }
+            }
+        }
+    }
+
+
+    public static void verificarAprovacao(double media, int mediaAprovacao) {
+        if (media >= mediaAprovacao) {
+            System.out.println("Aluno aprovado!");
+        } else {
+            System.out.println("Aluno reprovado.");
+        }
+    }
+
+    public static double calcularMedia(String[][] matriz, int linhas, String nomeMateria) {
+        double soma = 0;
+        int contador = 0;
+
+        for (int i = 0; i < linhas; i++) {
+            if (matriz[i][0] != null && matriz[i][0].equals(nomeMateria)) { //equals utlizado para comparação
+                for (int j = 1; j < 5; j++) {
+                    if (matriz[i][j] != null) {
+                        soma += Double.parseDouble(matriz[i][j]); //converter uma string em um tipo primitivo"double"
+                        contador++;
+                    }
+                }
+                break; // Matéria encontrada, interrompe o loop
+            }
+        }
+
+        if (contador == 0) {
+            System.out.println("Matéria não encontrada ou não possui notas.");
+            return 0;
+        }
+
+        return soma / contador;
+    }
+
+    public static void adicionarMatéria(String[][] matriz, int linhas, int colunas){
+        Scanner scanner = new Scanner(System.in);
+        int linha;
+
+        mostrarMatéria(matriz, linhas, colunas);
+        do {
+            System.out.println("Informe a posição que a matéria irá ficar");
+            linha = scanner.nextInt();
+        } while(linha < 1 || linha > linhas);
+        System.out.println("Insira o nome da Matéria: ");
+        matriz[linha-1][0] = scanner.next();
+        System.out.println("Nota do Primeiro Bimestre: ");
+        matriz[linha-1][1] = scanner.next();
+        System.out.println("Nota do Segundo Bimestre: ");
+        matriz[linha-1][2] = scanner.next();
+        System.out.println("Nota do Terceiro Bimestre: ");
+        matriz[linha-1][3] = scanner.next();
+        System.out.println("Nota do Quarto Bimestre: ");
+        matriz[linha-1][4] = scanner.next();
+        System.out.println("Informações adicionadas!");
+
+    }
+
+    public static void mostrarMatéria(String [][] matriz, int linhas, int colunas) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Matérias | 1º Bim | 2º Bim | 3º Bim | 4º Bim |");
+        for(int i = 0; i < linhas; i++) {
+            System.out.print((i+1) + " - ");
+            for(int j = 0; j < colunas; j++) {
+                System.out.print(matriz[i][j] + " | ");
+
+            }
+            System.out.println();
+        }
+    }
+
+    public static void retirarMatéria(String [][] matriz, int linhas, String nomeMatéria) {
+        boolean encontrado = false;
+        for(int i = 0; i < linhas; i++) {
+            if(matriz[i][0] != null && matriz[i][0].equals(nomeMatéria)) {
+                encontrado = true;
+                matriz[i][0] = null;
+                matriz[i][1] = null;
+                matriz[i][2] = null;
+                matriz[i][3] = null;
+                matriz[i][4] = null;
+
+            }
+        }
+        if(encontrado) { // if (encontrado == true) {
+            System.out.println("Matéria removida.");
+        } else {
+            System.out.println("Matéria não foi encontrada.");
+        }
+    }
+
+
+
+
+    public static void main(String[] args) {
+        String [][] lista;
+        int opcao, quantMatérias, mediaApr;
+        int colunas = 5;
+        Scanner scanner = new Scanner(System.in);
+        String nomeDoAluno, nomeMatéria, matéria;
+
+        System.out.println("Bem vindo Aluno, qual o seu nome?");
+        nomeDoAluno = scanner.next();
+        System.out.println("Qual a média necessária para aprovação?");
+        mediaApr= scanner.nextInt();
+        System.out.println("Olá " + nomeDoAluno + " quantas matérias vai adicionar em seu boletim?");
+        quantMatérias = scanner.nextInt();
+        lista = new String[quantMatérias][colunas];
+
+        do {
+            System.out.println("Escolha uma opção: \n 1 - Mostrar Matérias \n 2 - Adicionar Matérias \n 3 - Excluir Matéria \n 4 - Média  \n 5 - Resultado Final \n 6 - Ranking \n 0 - Sair.");
+            opcao = scanner.nextInt();
+            switch(opcao) {
+                case 0:
+                    break;
+                case 1:
+                    mostrarMatéria(lista, quantMatérias, colunas);
+                    break;
+                case 2:
+                    adicionarMatéria(lista, quantMatérias, colunas);
+                    break;
+                case 3:
+                    System.out.println("Insira a matéria a ser removida.");
+                    nomeMatéria = scanner.next();
+                    retirarMatéria(lista, quantMatérias, nomeMatéria);
+                    break;
+                case 4:
+                    System.out.println("Insira o nome da matéria para calcular a média:");
+                    String nomeMateria = scanner.next();
+                    double media = calcularMedia(lista, quantMatérias, nomeMateria);
+                    System.out.println("Média da matéria " + nomeMateria + ": " + media);
+                    break;
+                case 5:
+                    System.out.println("Insira o nome da matéria para calcular a média:");
+                    nomeMateria = scanner.next();
+                    media = calcularMedia(lista, quantMatérias, nomeMateria);
+                    System.out.println("Média da matéria " + nomeMateria + ": " + media);
+                    verificarAprovacao(media, mediaApr);
+                    break;
+                case 6:
+                    criarRanking(lista, quantMatérias, colunas);
+                    break;
+
+                default:
+                    System.out.println("Opção inválida!");
+            }
+        } while (opcao != 0);
+    }
+}
+
